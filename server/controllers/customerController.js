@@ -59,6 +59,25 @@ exports.homepage = async(req,res) => {
 
 /**
  * GET/
+ * About
+ */
+
+exports.about = async(req,res) => {
+        const locals = {
+            title: 'About',
+            description: 'Free Nodejs User Management System'
+        }
+    try {
+        res.render('about', locals);
+    } catch (error) {
+        console.log(error);
+    }
+    
+}
+
+
+/**
+ * GET/
  * NEW CUSTOMER FORM
  */
 
@@ -166,10 +185,58 @@ exports.editPost = async(req,res) => {
             updateAt: Date.now(),
         });
         await res.redirect(`/edit/${req.params.id}`);
-        
+
         console.log("redirected");
     } catch (error) {
         console.log(error);
     }  
 };
 
+/**
+ * Delete/
+ * Delete Customer Data
+ */
+
+exports.deleteCustomer = async(req,res) => {
+    try {
+        await Customer.deleteOne({ _id: req.params.id});
+        res.redirect("/")
+    } catch (error) {
+        console.log(error);
+    } 
+};
+
+/**
+ * GET/
+ * Search Customer Data
+ */
+
+exports.searchCustomers = async(req,res) => {
+
+    const locals = {
+        title: "Search Customer Data",
+        description: "Free Nodejs User Management System",
+    };
+    
+try {
+
+    let searchTerm = req.body.searchTerm;
+    const searchNoSpecialchar = searchTerm.replace(/[^a-zA-Z0-9 ]/g,)
+
+    const customers = await Customer.find({
+       $or:  [
+         { firstName: { $regex: new RegExp(searchNoSpecialchar, "i") }},
+         { lastName: { $regex: new RegExp(searchNoSpecialchar, "i") }},
+
+             ]
+        });
+
+        res.render("search", {
+            customers,
+            locals
+        })
+    
+} catch (error) {
+    console.log(error);
+}
+};
