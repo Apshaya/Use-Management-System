@@ -166,8 +166,9 @@ exports.editPost = async(req,res) => {
             updateAt: Date.now(),
         });
         await res.redirect(`/edit/${req.params.id}`);
+        
         console.log("redirected");
-    }catch (error) {
+    } catch (error) {
         console.log(error);
     }  
 };
